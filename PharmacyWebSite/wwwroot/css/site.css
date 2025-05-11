@@ -1,0 +1,55 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+/* =================== Custom Styles =================== */
+/* Logo styling */
+.logo {
+    transition: transform 0.3s ease;
+}
+
+    .logo:hover {
+        transform: scale(1.05);
+    }
+
+.brand-text {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: 700;
+    color: #2a7fba;
+    font-size: 1.4rem;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .logo {
+        height: 35px !important;
+    }
+
+    .brand-text {
+        font-size: 1.2rem;
+    }
+}
+
+/* Footer styling */
+footer {
+    background: #f8f9fa;
+    padding: 1rem 0;
+}

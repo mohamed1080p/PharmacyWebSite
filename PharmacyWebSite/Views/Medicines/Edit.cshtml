@@ -1,0 +1,73 @@
+﻿@model PharmacyWebSite.Models.Medicine
+
+@{
+    ViewData["Title"] = "Edit Medicine";
+}
+
+<h2 class="text-center mt-4">Edit Medicine</h2>
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <form asp-action="Edit" enctype="multipart/form-data" method="post">
+            <input type="hidden" asp-for="Id" />
+
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Name" class="form-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Description" class="form-label"></label>
+                <textarea asp-for="Description" class="form-control"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Price" class="form-label"></label>
+                <input asp-for="Price" class="form-control" />
+                <span asp-validation-for="Price" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Category" class="form-label"></label>
+                <input asp-for="Category" class="form-control" />
+                <span asp-validation-for="Category" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Stock" class="form-label"></label>
+                <input asp-for="Stock" class="form-control" />
+                <span asp-validation-for="Stock" class="text-danger"></span>
+            </div>
+
+            @if (!string.IsNullOrEmpty(Model.ImagePath))
+            {
+                <div class="form-group mb-3">
+                    <label class="form-label">Current Image:</label><br />
+                    <img src="@Model.ImagePath" alt="Medicine Image" width="150" class="mb-2" />
+                </div>
+            }
+
+            <div class="form-group mb-3">
+                <label for="imageFile" class="form-label">Upload New Image (optional):</label>
+                <input type="file" name="imageFile" class="form-control" />
+            </div>
+
+            <input type="hidden" asp-for="ImagePath" />
+
+            <div class="form-group text-center">
+                <button type="submit" class="btn btn-primary px-5">Save Changes</button>
+                <a asp-action="Index" class="btn btn-secondary ms-2">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
