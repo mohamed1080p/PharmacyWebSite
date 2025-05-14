@@ -1,56 +1,77 @@
 ﻿@model PharmacyWebSite.Models.Medicine
 
 @{
-    ViewData["Title"] = "Add Medicine";
+    ViewData["Title"] = "Create Medicine";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2 class="text-center mt-4">Add New Medicine</h2>
+<div class="container mt-4">
+    <h2>Add New Medicine</h2>
+    <hr />
 
-<div class="row justify-content-center">
-    <div class="col-md-8">
-        <form asp-action="Create" enctype="multipart/form-data" method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="row">
+        <div class="col-md-8">
+            <form asp-action="Create" enctype="multipart/form-data">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-            <div class="form-group mb-3">
-                <label asp-for="Name" class="form-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
+                <div class="form-group mb-3">
+                    <label asp-for="Name" class="control-label"></label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
 
-            <div class="form-group mb-3">
-                <label asp-for="Description" class="form-label"></label>
-                <textarea asp-for="Description" class="form-control"></textarea>
-                <span asp-validation-for="Description" class="text-danger"></span>
-            </div>
+                <div class="form-group mb-3">
+                    <label asp-for="Description" class="control-label"></label>
+                    <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
 
-            <div class="form-group mb-3">
-                <label asp-for="Price" class="form-label"></label>
-                <input asp-for="Price" class="form-control" />
-                <span asp-validation-for="Price" class="text-danger"></span>
-            </div>
+                <div class="form-group mb-3">
+                    <label asp-for="Price" class="control-label"></label>
+                    <input asp-for="Price" class="form-control" type="number" step="0.01" />
+                    <span asp-validation-for="Price" class="text-danger"></span>
+                </div>
 
-            <div class="form-group mb-3">
-                <label asp-for="Category" class="form-label"></label>
-                <input asp-for="Category" class="form-control" />
-                <span asp-validation-for="Category" class="text-danger"></span>
-            </div>
+                <div class="form-group mb-3">
+                    <label asp-for="Category" class="control-label"></label>
+                    <select asp-for="Category" class="form-control">
+                        <option value="">-- Select Category --</option>
+                        <option value="Pain Relief">Pain Relief</option>
+                        <option value="Antibiotics">Antibiotics</option>
+                        <option value="Cardiovascular">Cardiovascular</option>
+                        <option value="Respiratory">Respiratory</option>
+                        <option value="Gastrointestinal">Gastrointestinal</option>
+                        <option value="Diabetes">Diabetes</option>
+                        <option value="Vitamins">Vitamins</option>
+                        <option value="Supplements">Supplements</option>
+                        <option value="First Aid">First Aid</option>
+                        <option value="Other">Other</option>
+                    </select>
+                    <span asp-validation-for="Category" class="text-danger"></span>
+                </div>
 
-            <div class="form-group mb-3">
-                <label asp-for="Stock" class="form-label"></label>
-                <input asp-for="Stock" class="form-control" />
-                <span asp-validation-for="Stock" class="text-danger"></span>
-            </div>
+                <div class="form-group mb-3">
+                    <label asp-for="Stock" class="control-label"></label>
+                    <input asp-for="Stock" class="form-control" type="number" min="0" />
+                    <span asp-validation-for="Stock" class="text-danger"></span>
+                </div>
 
-            <div class="form-group mb-3">
-                <label for="imageFile" class="form-label">Medicine Image</label>
-                <input type="file" name="imageFile" class="form-control" />
-            </div>
+                <div class="form-group mb-3">
+                    <label for="imageFile" class="control-label">Medicine Image</label>
+                    <input type="file" id="imageFile" name="imageFile" class="form-control" accept="image/*" />
+                    <small class="form-text text-muted">Upload an image of the medicine (optional)</small>
+                </div>
 
-            <div class="form-group text-center">
-                <button type="submit" class="btn btn-primary px-5">Save</button>
-                <a asp-action="Index" class="btn btn-secondary ms-2">Cancel</a>
-            </div>
-        </form>
+                <div class="form-group mt-4">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-save"></i> Create
+                    </button>
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="bi bi-arrow-left"></i> Back to List
+                    </a>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
@@ -58,4 +79,28 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+
+    <script>
+        // Preview uploaded image
+        document.getElementById('imageFile').addEventListener('change', function(e) {
+            const fileInput = e.target;
+            if (fileInput.files && fileInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('imagePreview');
+                    if (!preview) {
+                        const img = document.createElement('img');
+                        img.id = 'imagePreview';
+                        img.className = 'img-thumbnail mt-2';
+                        img.style.maxHeight = '200px';
+                        img.src = e.target.result;
+                        fileInput.parentNode.appendChild(img);
+                    } else {
+                        preview.src = e.target.result;
+                    }
+                };
+                reader.readAsDataURL(fileInput.files[0]);
+            }
+        });
+    </script>
 }

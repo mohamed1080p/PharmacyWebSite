@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Mvc;
 using PharmacyWebSite.Data;
 using PharmacyWebSite.Models;
+using System.Security.Claims;
 
 public class AccountController : Controller
 {
@@ -18,7 +21,7 @@ public class AccountController : Controller
     }
 
     [HttpPost]
-    public IActionResult Login(LoginViewModel model)
+    public async Task<IActionResult> Login(LoginViewModel model)
     {
         if (ModelState.IsValid)
         {
@@ -26,7 +29,26 @@ public class AccountController : Controller
 
             if (user != null)
             {
-                HttpContext.Session.SetString("UserId", user.Id.ToString());
+                var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                    new Claim(ClaimTypes.Name, user.Name),
+                    new Claim(ClaimTypes.Email, user.Email),
+                    new Claim("IsAdmin", user.IsAdmin.ToString())
+                };
+
+                var authProperties = new AuthenticationProperties
+                {
+                    IsPersistent = true,
+                    ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(30)
+                };
+
+                var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                await HttpContext.SignInAsync(
+                    CookieAuthenticationDefaults.AuthenticationScheme,
+                    new ClaimsPrincipal(identity),
+                    authProperties);
+
                 return RedirectToAction("Index", "Home");
             }
 
@@ -35,10 +57,10 @@ public class AccountController : Controller
         return View(model);
     }
 
-    [HttpGet]
-    public IActionResult Logout()
+    [HttpPost]
+    public async Task<IActionResult> Logout()
     {
-        HttpContext.Session.Clear();
+        await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         return RedirectToAction("Index", "Home");
     }
 
@@ -57,9 +79,9 @@ public class AccountController : Controller
             {
                 Name = model.Name,
                 Email = model.Email,
-                Password = model.Password, // Note: You should hash this!
+                Password = model.Password,
                 PhoneNumber = model.PhoneNumber,
-                IsAdmin = false // Default to non-admin
+                IsAdmin = false
             };
 
             _context.Users.Add(user);
@@ -68,5 +90,11 @@ public class AccountController : Controller
             return RedirectToAction("Login");
         }
         return View(model);
+    }
+
+    [HttpGet]
+    public IActionResult AccessDenied()
+    {
+        return View();
     }
 }

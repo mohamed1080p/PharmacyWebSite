@@ -21,6 +21,18 @@ namespace PharmacyWebSite.Data
                 entity.HasIndex(u => u.Email)
                     .IsUnique(); // Ensure email uniqueness
             });
+            modelBuilder.Entity<Medicine>(entity =>
+            {
+                entity.Property(m => m.Name)
+                    .IsRequired()
+                    .HasMaxLength(100);
+
+                entity.Property(m => m.Price)
+                    .HasColumnType("decimal(18,2)");
+
+                entity.Property(m => m.Stock)
+                    .HasDefaultValue(0);
+            });
 
             // Keep your existing configurations below
             modelBuilder.Entity<OrderItem>()
