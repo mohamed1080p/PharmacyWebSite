@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PharmacyWebSite.Data;
 using PharmacyWebSite.Models;
@@ -34,7 +35,7 @@ public class AccountController : Controller
                     new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                     new Claim(ClaimTypes.Name, user.Name),
                     new Claim(ClaimTypes.Email, user.Email),
-                    new Claim("IsAdmin", user.IsAdmin.ToString())
+                    new Claim(ClaimTypes.Role, user.IsAdmin ? "Admin" : "User")
                 };
 
                 var authProperties = new AuthenticationProperties
@@ -51,9 +52,8 @@ public class AccountController : Controller
 
                 return RedirectToAction("Index", "Home");
             }
-
-            ModelState.AddModelError("", "Invalid login attempt.");
         }
+        ModelState.AddModelError("", "Invalid login attempt.");
         return View(model);
     }
 
@@ -79,7 +79,7 @@ public class AccountController : Controller
             {
                 Name = model.Name,
                 Email = model.Email,
-                Password = model.Password,
+                Password = model.Password, // In production, use password hashing
                 PhoneNumber = model.PhoneNumber,
                 IsAdmin = false
             };
@@ -90,6 +90,12 @@ public class AccountController : Controller
             return RedirectToAction("Login");
         }
         return View(model);
+    }
+
+    [Authorize]
+    public IActionResult ViewClaims()
+    {
+        return View(User.Claims.ToList());
     }
 
     [HttpGet]

@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace PharmacyWebSite.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class MedicinesController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -23,227 +24,149 @@ namespace PharmacyWebSite.Controllers
             _webHostEnvironment = webHostEnvironment;
         }
 
-        // GET: Medicines
+        [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
-            var medicines = await _context.Medicines.ToListAsync();
-            return View(medicines);
+            return View(await _context.Medicines.ToListAsync());
         }
 
-        // GET: Medicines/Details/5
+        [AllowAnonymous]
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var medicine = await _context.Medicines
-                .FirstOrDefaultAsync(m => m.Id == id);
-
-            if (medicine == null)
-            {
-                return NotFound();
-            }
-
-            return View(medicine);
+            if (id == null) return NotFound();
+            var medicine = await _context.Medicines.FindAsync(id);
+            return medicine == null ? NotFound() : View(medicine);
         }
 
-        // GET: Medicines/Create
-        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Medicines/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Create([Bind("Id,Name,Description,Price,Category,Stock")] Medicine medicine, IFormFile imageFile)
+        public async Task<IActionResult> Create(Medicine medicine, IFormFile imageFile)
         {
             if (ModelState.IsValid)
             {
-                // Handle file upload if an image was provided
                 if (imageFile != null && imageFile.Length > 0)
                 {
-                    // Create unique filename
-                    string fileName = Guid.NewGuid().ToString() + Path.GetExtension(imageFile.FileName);
+                    var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "images", "medicines");
+                    Directory.CreateDirectory(uploadsFolder);
 
-                    // Set the path where to save the image
-                    string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "images");
+                    var uniqueFileName = $"{Guid.NewGuid()}{Path.GetExtension(imageFile.FileName)}";
+                    var filePath = Path.Combine(uploadsFolder, uniqueFileName);
 
-                    // Create directory if it doesn't exist
-                    if (!Directory.Exists(uploadsFolder))
+                    using (var stream = new FileStream(filePath, FileMode.Create))
                     {
-                        Directory.CreateDirectory(uploadsFolder);
+                        await imageFile.CopyToAsync(stream);
                     }
 
-                    string filePath = Path.Combine(uploadsFolder, fileName);
-
-                    // Save the file
-                    using (var fileStream = new FileStream(filePath, FileMode.Create))
-                    {
-                        await imageFile.CopyToAsync(fileStream);
-                    }
-
-                    // Update the ImagePath property
-                    medicine.ImagePath = fileName;
+                    medicine.ImagePath = $"/images/medicines/{uniqueFileName}";
                 }
 
-                // Add the medicine to the context
                 _context.Add(medicine);
-
-                // Save changes to the database
                 await _context.SaveChangesAsync();
-
-                // Redirect to the Index action
+                TempData["SuccessMessage"] = $"{medicine.Name} added successfully!";
                 return RedirectToAction(nameof(Index));
             }
-
-            // If we got this far, something failed; redisplay form
             return View(medicine);
         }
 
-        // GET: Medicines/Edit/5
-        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
+            if (id == null) return NotFound();
             var medicine = await _context.Medicines.FindAsync(id);
-            if (medicine == null)
-            {
-                return NotFound();
-            }
-
-            return View(medicine);
+            return medicine == null ? NotFound() : View(medicine);
         }
 
-        // POST: Medicines/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Price,Category,Stock,ImagePath")] Medicine medicine, IFormFile imageFile)
+        public async Task<IActionResult> Edit(int id, Medicine medicine, IFormFile imageFile)
         {
-            if (id != medicine.Id)
+            if (id != medicine.Id) return NotFound();
+
+            try
             {
-                return NotFound();
-            }
+                var existingMedicine = await _context.Medicines.FindAsync(id);
+                if (existingMedicine == null) return NotFound();
 
-            if (ModelState.IsValid)
-            {
-                try
+                // Update fields
+                existingMedicine.Name = medicine.Name;
+                existingMedicine.Description = medicine.Description;
+                existingMedicine.Price = medicine.Price;
+                existingMedicine.Category = medicine.Category;
+                existingMedicine.Stock = medicine.Stock;
+
+                // Handle image update
+                if (imageFile != null && imageFile.Length > 0)
                 {
-                    // Handle file upload if a new image was provided
-                    if (imageFile != null && imageFile.Length > 0)
-                    {
-                        // Delete old image if it exists
-                        if (!string.IsNullOrEmpty(medicine.ImagePath))
-                        {
-                            string oldImagePath = Path.Combine(_webHostEnvironment.WebRootPath, "images", medicine.ImagePath);
-                            if (System.IO.File.Exists(oldImagePath))
-                            {
-                                System.IO.File.Delete(oldImagePath);
-                            }
-                        }
-
-                        // Create unique filename
-                        string fileName = Guid.NewGuid().ToString() + Path.GetExtension(imageFile.FileName);
-
-                        // Set the path where to save the image
-                        string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "images");
-
-                        // Create directory if it doesn't exist
-                        if (!Directory.Exists(uploadsFolder))
-                        {
-                            Directory.CreateDirectory(uploadsFolder);
-                        }
-
-                        string filePath = Path.Combine(uploadsFolder, fileName);
-
-                        // Save the file
-                        using (var fileStream = new FileStream(filePath, FileMode.Create))
-                        {
-                            await imageFile.CopyToAsync(fileStream);
-                        }
-
-                        // Update the ImagePath property
-                        medicine.ImagePath = fileName;
-                    }
-
-                    _context.Update(medicine);
-                    await _context.SaveChangesAsync();
+                    var newImagePath = await SaveImage(imageFile);
+                    DeleteImage(existingMedicine.ImagePath);
+                    existingMedicine.ImagePath = newImagePath;
                 }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!MedicineExists(medicine.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+
+                _context.Update(existingMedicine);
+                await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = $"{medicine.Name} updated successfully!";
                 return RedirectToAction(nameof(Index));
             }
-            return View(medicine);
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", $"Error updating medicine: {ex.Message}");
+                return View(medicine);
+            }
         }
 
-        // GET: Medicines/Delete/5
-        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var medicine = await _context.Medicines
-                .FirstOrDefaultAsync(m => m.Id == id);
-
-            if (medicine == null)
-            {
-                return NotFound();
-            }
-
-            return View(medicine);
+            if (id == null) return NotFound();
+            var medicine = await _context.Medicines.FindAsync(id);
+            return medicine == null ? NotFound() : View(medicine);
         }
 
-        // POST: Medicines/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var medicine = await _context.Medicines.FindAsync(id);
-
             if (medicine != null)
             {
-                // Delete image file if it exists
-                if (!string.IsNullOrEmpty(medicine.ImagePath))
-                {
-                    string imagePath = Path.Combine(_webHostEnvironment.WebRootPath, "images", medicine.ImagePath);
-                    if (System.IO.File.Exists(imagePath))
-                    {
-                        System.IO.File.Delete(imagePath);
-                    }
-                }
-
+                DeleteImage(medicine.ImagePath);
                 _context.Medicines.Remove(medicine);
                 await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = $"{medicine.Name} deleted successfully!";
             }
-
             return RedirectToAction(nameof(Index));
         }
 
-        private bool MedicineExists(int id)
+        private bool MedicineExists(int id) => _context.Medicines.Any(e => e.Id == id);
+
+        private async Task<string> SaveImage(IFormFile imageFile)
         {
-            return _context.Medicines.Any(e => e.Id == id);
+            var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "images", "medicines");
+            Directory.CreateDirectory(uploadsFolder);
+
+            var uniqueFileName = $"{Guid.NewGuid()}{Path.GetExtension(imageFile.FileName)}";
+            var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await imageFile.CopyToAsync(stream);
+            }
+
+            return $"/images/medicines/{uniqueFileName}";
+        }
+
+        private void DeleteImage(string imagePath)
+        {
+            if (string.IsNullOrEmpty(imagePath)) return;
+
+            var fullPath = Path.Combine(_webHostEnvironment.WebRootPath, imagePath.TrimStart('/'));
+            if (System.IO.File.Exists(fullPath))
+            {
+                System.IO.File.Delete(fullPath);
+            }
         }
     }
 }

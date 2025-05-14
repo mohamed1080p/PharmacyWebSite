@@ -8,8 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
-        .LogTo(Console.WriteLine, LogLevel.Information)
-        .EnableSensitiveDataLogging());
+    .LogTo(Console.WriteLine, LogLevel.Information));
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddHttpContextAccessor();
@@ -28,7 +27,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("AdminOnly", policy =>
-        policy.RequireClaim("IsAdmin", "True"));
+        policy.RequireRole("Admin"));
 });
 
 var app = builder.Build();
@@ -79,8 +78,8 @@ using (var scope = app.Services.CreateScope())
                 PhoneNumber = "+1234567890",
                 IsAdmin = true
             });
+            db.SaveChanges();
         }
-        db.SaveChanges();
     }
     catch (Exception ex)
     {
