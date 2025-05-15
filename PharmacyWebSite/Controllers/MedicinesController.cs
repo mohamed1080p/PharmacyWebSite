@@ -17,6 +17,7 @@ namespace PharmacyWebSite.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private const string ImageUploadFolder = "images/medicines";
 
         public MedicinesController(ApplicationDbContext context, IWebHostEnvironment webHostEnvironment)
         {
@@ -25,10 +26,30 @@ namespace PharmacyWebSite.Controllers
         }
 
         [AllowAnonymous]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString, string categoryFilter)
         {
-            return View(await _context.Medicines.ToListAsync());
+            var medicines = from m in _context.Medicines
+                            select m;
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                medicines = medicines.Where(m => m.Name.Contains(searchString)
+                                             || m.Description.Contains(searchString));
+            }
+
+            if (!string.IsNullOrEmpty(categoryFilter))
+            {
+                medicines = medicines.Where(m => m.Category == categoryFilter);
+            }
+
+            ViewBag.Categories = await _context.Medicines
+                .Select(m => m.Category)
+                .Distinct()
+                .ToListAsync();
+
+            return View(await medicines.OrderByDescending(m => m.Id).ToListAsync());
         }
+
 
         [AllowAnonymous]
         public async Task<IActionResult> Details(int? id)
@@ -47,28 +68,25 @@ namespace PharmacyWebSite.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Medicine medicine, IFormFile imageFile)
         {
-            if (ModelState.IsValid)
+            try
             {
-                if (imageFile != null && imageFile.Length > 0)
+                if (ModelState.IsValid)
                 {
-                    var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "images", "medicines");
-                    Directory.CreateDirectory(uploadsFolder);
-
-                    var uniqueFileName = $"{Guid.NewGuid()}{Path.GetExtension(imageFile.FileName)}";
-                    var filePath = Path.Combine(uploadsFolder, uniqueFileName);
-
-                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    if (imageFile != null && imageFile.Length > 0)
                     {
-                        await imageFile.CopyToAsync(stream);
+                        medicine.ImagePath = await SaveImage(imageFile);
                     }
 
-                    medicine.ImagePath = $"/images/medicines/{uniqueFileName}";
-                }
+                    _context.Add(medicine);
+                    await _context.SaveChangesAsync();
 
-                _context.Add(medicine);
-                await _context.SaveChangesAsync();
-                TempData["SuccessMessage"] = $"{medicine.Name} added successfully!";
-                return RedirectToAction(nameof(Index));
+                    TempData["SuccessMessage"] = $"{medicine.Name} added successfully!";
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Error adding medicine: {ex.Message}";
             }
             return View(medicine);
         }
@@ -98,7 +116,6 @@ namespace PharmacyWebSite.Controllers
                 existingMedicine.Category = medicine.Category;
                 existingMedicine.Stock = medicine.Stock;
 
-                // Handle image update
                 if (imageFile != null && imageFile.Length > 0)
                 {
                     var newImagePath = await SaveImage(imageFile);
@@ -108,12 +125,13 @@ namespace PharmacyWebSite.Controllers
 
                 _context.Update(existingMedicine);
                 await _context.SaveChangesAsync();
+
                 TempData["SuccessMessage"] = $"{medicine.Name} updated successfully!";
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError("", $"Error updating medicine: {ex.Message}");
+                TempData["ErrorMessage"] = $"Error updating medicine: {ex.Message}";
                 return View(medicine);
             }
         }
@@ -129,22 +147,30 @@ namespace PharmacyWebSite.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var medicine = await _context.Medicines.FindAsync(id);
-            if (medicine != null)
+            try
             {
-                DeleteImage(medicine.ImagePath);
-                _context.Medicines.Remove(medicine);
-                await _context.SaveChangesAsync();
-                TempData["SuccessMessage"] = $"{medicine.Name} deleted successfully!";
+                var medicine = await _context.Medicines.FindAsync(id);
+                if (medicine != null)
+                {
+                    DeleteImage(medicine.ImagePath);
+                    _context.Medicines.Remove(medicine);
+                    await _context.SaveChangesAsync();
+                    TempData["SuccessMessage"] = $"{medicine.Name} deleted successfully!";
+                }
+                return RedirectToAction(nameof(Index));
             }
-            return RedirectToAction(nameof(Index));
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Error deleting medicine: {ex.Message}";
+                return RedirectToAction(nameof(Index));
+            }
         }
 
         private bool MedicineExists(int id) => _context.Medicines.Any(e => e.Id == id);
 
         private async Task<string> SaveImage(IFormFile imageFile)
         {
-            var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "images", "medicines");
+            var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, ImageUploadFolder);
             Directory.CreateDirectory(uploadsFolder);
 
             var uniqueFileName = $"{Guid.NewGuid()}{Path.GetExtension(imageFile.FileName)}";
@@ -155,7 +181,7 @@ namespace PharmacyWebSite.Controllers
                 await imageFile.CopyToAsync(stream);
             }
 
-            return $"/images/medicines/{uniqueFileName}";
+            return $"/{ImageUploadFolder}/{uniqueFileName}";
         }
 
         private void DeleteImage(string imagePath)

@@ -79,7 +79,7 @@ public class AccountController : Controller
             {
                 Name = model.Name,
                 Email = model.Email,
-                Password = model.Password, // In production, use password hashing
+                Password = model.Password,
                 PhoneNumber = model.PhoneNumber,
                 IsAdmin = false
             };
