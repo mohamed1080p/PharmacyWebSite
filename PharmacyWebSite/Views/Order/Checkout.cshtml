@@ -1,0 +1,72 @@
+﻿@model PharmacyWebSite.Models.Cart
+
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h4>Order Summary</h4>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Medicine</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.CartItems)
+                            {
+                                <tr>
+                                    <td>@item.Medicine.Name</td>
+                                    <td>@item.Price.ToString("C")</td>
+                                    <td>@item.Quantity</td>
+                                    <td>@((item.Quantity * item.Price).ToString("C"))</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4>Order Total</h4>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-3">
+                        <span>Subtotal:</span>
+                        <span>@Model.CartItems.Sum(ci => ci.Quantity * ci.Price).ToString("C")</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span>Shipping:</span>
+                        <span>Free</span>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between fw-bold">
+                        <span>Total:</span>
+                        <span>@Model.CartItems.Sum(ci => ci.Quantity * ci.Price).ToString("C")</span>
+                    </div>
+                </div>
+                <div class="card-footer bg-white">
+                    <form asp-action="ConfirmOrder" method="post">
+                        @Html.AntiForgeryToken()
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="bi bi-check-circle"></i> Confirm Order
+                            </button>
+                            <a asp-controller="Cart" asp-action="Index" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left"></i> Continue Shopping
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

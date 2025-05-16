@@ -1,0 +1,160 @@
+﻿@model PharmacyWebSite.Models.Cart
+
+<div class="container py-5">
+    <h1 class="display-6 fw-bold text-primary mb-4">Your Shopping Cart</h1>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (!Model.CartItems.Any())
+    {
+        <div class="alert alert-info">
+            Your cart is empty. <a asp-controller="Medicines" asp-action="Index">Browse medicines</a> to add items.
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Medicine</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Total</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.CartItems)
+                    {
+                        <tr data-cartitem-id="@item.CartItemId">
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    @if (!string.IsNullOrEmpty(item.Medicine.ImagePath))
+                                    {
+                                        <img src="@item.Medicine.ImagePath" class="img-thumbnail me-3" style="width: 80px; height: 60px;">
+                                    }
+                                    <div>
+                                        <h6 class="mb-0">@item.Medicine.Name</h6>
+                                        <small class="text-muted">@item.Medicine.Category</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>@item.Price.ToString("C")</td>
+                            <td>
+                                <div class="input-group" style="width: 120px;">
+                                    <input type="number" min="1" max="@item.Medicine.Stock"
+                                           value="@item.Quantity" class="form-control quantity-input">
+                                    <button class="btn btn-outline-primary update-quantity-btn">
+                                        <i class="bi bi-arrow-clockwise"></i>
+                                    </button>
+                                </div>
+                            </td>
+                            <td class="item-total">@((item.Quantity * item.Price).ToString("C"))</td>
+                            <td>
+                                <button class="btn btn-outline-danger remove-item-btn">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="3" class="text-end fw-bold">Total:</td>
+                        <td class="fw-bold" id="cart-total">@Model.CartItems.Sum(ci => ci.Quantity * ci.Price).ToString("C")</td>
+                        <td></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <div class="d-flex justify-content-between mt-4">
+            <a asp-controller="Medicines" asp-action="Index" class="btn btn-outline-primary">
+                <i class="bi bi-arrow-left"></i> Continue Shopping
+            </a>
+            <form asp-action="Checkout" method="post">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn btn-success">
+                    <i class="bi bi-cart-check"></i> Proceed to Checkout
+                </button>
+            </form>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Remove item from cart
+            $('.remove-item-btn').click(function() {
+                const row = $(this).closest('tr');
+                const cartItemId = row.data('cartitem-id');
+
+                $.post({
+                    url: '/Cart/RemoveItem',
+                    data: {
+                        cartItemId: cartItemId,
+                        __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            row.fadeOut(300, function() {
+                                $(this).remove();
+                                updateCartTotal();
+                                document.dispatchEvent(new Event('cartUpdated'));
+                            });
+                        }
+                    }
+                });
+            });
+
+            // Update quantity
+            $('.update-quantity-btn').click(function() {
+                const row = $(this).closest('tr');
+                const cartItemId = row.data('cartitem-id');
+                const quantity = row.find('.quantity-input').val();
+
+                $.post({
+                    url: '/Cart/UpdateQuantity',
+                    data: {
+                        cartItemId: cartItemId,
+                        quantity: quantity,
+                        __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            row.find('.item-total').text(response.itemTotal);
+                            $('#cart-total').text(response.cartTotal);
+                            document.dispatchEvent(new Event('cartUpdated'));
+                        } else {
+                            alert(response.message);
+                        }
+                    }
+                });
+            });
+
+            function updateCartTotal() {
+                let total = 0;
+                $('.item-total').each(function() {
+                    total += parseFloat($(this).text().replace(/[^0-9.-]+/g,""));
+                });
+                $('#cart-total').text('$' + total.toFixed(2));
+            }
+        });
+    </script>
+}

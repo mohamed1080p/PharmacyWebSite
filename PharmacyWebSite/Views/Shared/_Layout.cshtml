@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/PharmacyWebSite.styles.css" asp-append-version="true" />
     <link rel="icon" type="image/png" href="~/images/logo/favicon.png">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
     @RenderSection("Styles", required: false)
 </head>
 <body>
@@ -36,6 +37,14 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link position-relative" asp-controller="Cart" asp-action="Index">
+                                <i class="bi bi-cart fs-5"></i>
+                                <span id="cartCount" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                    0
+                                </span>
+                            </a>
                         </li>
                     </ul>
                     <ul class="navbar-nav">
@@ -71,9 +80,54 @@
         </div>
     </footer>
 
+    <!-- Toast Notification -->
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+        <div id="addedToCartToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header bg-success text-white">
+                <strong class="me-auto">Success</strong>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+                Item added to cart!
+            </div>
+        </div>
+    </div>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <script>
+        // Function to update cart count
+        async function updateCartCount() {
+            try {
+                const response = await fetch('/Cart/GetCartItemCount', {
+                    credentials: 'include'
+                });
+                if (response.ok) {
+                    const count = await response.text();
+                    document.getElementById('cartCount').textContent = count;
+                }
+            } catch (error) {
+                console.error('Error fetching cart count:', error);
+            }
+        }
+
+        // Update cart count when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            updateCartCount();
+
+            // Set up event listener for cart updates
+            document.addEventListener('cartUpdated', function() {
+                updateCartCount();
+
+                // Show toast notification
+                const toast = new bootstrap.Toast(document.getElementById('addedToCartToast'));
+                toast.show();
+            });
+        });
+    </script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

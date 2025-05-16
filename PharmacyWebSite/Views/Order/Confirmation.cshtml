@@ -1,0 +1,65 @@
+﻿@model PharmacyWebSite.Models.Order
+
+<div class="container py-5 text-center">
+    <div class="card shadow">
+        <div class="card-header bg-success text-white">
+            <h2><i class="bi bi-check-circle"></i> Order Confirmed</h2>
+        </div>
+        <div class="card-body">
+            <h4 class="text-success mb-4">Thank you for your order!</h4>
+            <p>Your order #@Model.OrderId has been confirmed.</p>
+
+            <!-- Email Status Alert -->
+            @if (ViewBag.EmailVerified)
+            {
+                <div class="alert alert-success">
+                    <i class="bi bi-envelope-check"></i>
+                    Confirmation email sent to: @ViewBag.UserEmail
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-warning">
+                    <i class="bi bi-envelope-exclamation"></i>
+                    Email not sent to @ViewBag.UserEmail.
+                    <a href="#" onclick="resendEmail(@Model.OrderId)" class="alert-link">Resend confirmation</a>
+                </div>
+            }
+
+            <!-- Rest of your order summary -->
+            <div class="mt-4">
+                <h5>Order Summary</h5>
+                <table class="table table-bordered mt-3">
+                    <!-- ... existing table code ... -->
+                </table>
+            </div>
+
+            <div class="mt-4">
+                <a asp-controller="Medicines" asp-action="Index" class="btn btn-primary">
+                    <i class="bi bi-bag"></i> Continue Shopping
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function resendEmail(orderId) {
+            fetch(`/Order/ResendConfirmationEmail?orderId=${orderId}`, {
+                method: 'POST',
+                headers: {
+                    'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('Confirmation email resent successfully!');
+                    location.reload();
+                } else {
+                    alert('Error resending email');
+                }
+            });
+        }
+    </script>
+}

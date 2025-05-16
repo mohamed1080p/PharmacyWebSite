@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using PharmacyWebSite.Data;
 using PharmacyWebSite.Models;
+using PharmacyWebSite.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +13,9 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddHttpContextAccessor();
+
+// Register email service HERE (before Build())
+builder.Services.AddTransient<IEmailSender, EmailSender>();
 
 // Configure authentication
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -30,7 +34,7 @@ builder.Services.AddAuthorization(options =>
         policy.RequireRole("Admin"));
 });
 
-var app = builder.Build();
+var app = builder.Build();  // <-- ALL service registrations MUST come before this line
 
 // Seed data
 using (var scope = app.Services.CreateScope())
@@ -46,7 +50,7 @@ using (var scope = app.Services.CreateScope())
         if (!db.Medicines.Any())
         {
             var medicines = new List<Medicine>
-        
+
             {
             new Medicine { Name = "Panadol Extra", Description = "مسكن للآلام وخافض للحرارة", Price = 25, Category = "Pain Relief", Stock = 50, ImagePath = "~/Images/panadol.jpg" },
             new Medicine { Name = "Antinal", Description = "لعلاج الإسهال", Price = 15, Category = "Gastrointestinal", Stock = 30, ImagePath = "~/Images/antinal.jpg" },
@@ -58,7 +62,7 @@ using (var scope = app.Services.CreateScope())
             new Medicine { Name = "Ventolin", Description = "موسع للشعب الهوائية", Price = 30, Category = "Respiratory", Stock = 15, ImagePath = "~/Images/ventolin.jpg" },
             new Medicine { Name = "Concor", Description = "لعلاج ضغط الدم", Price = 70, Category = "Cardiovascular", Stock = 10, ImagePath = "~/Images/concor.jpg" },
             new Medicine { Name = "Neuroton", Description = "مقوي للأعصاب", Price = 35, Category = "Supplements", Stock = 25, ImagePath = "~/Images/neuroton.jpg" },
-        
+
             };
             db.Medicines.AddRange(medicines);
             db.SaveChanges();
@@ -71,7 +75,7 @@ using (var scope = app.Services.CreateScope())
             {
                 Name = "Admin",
                 Email = "admin@pharmacy.com",
-                Password = "Admin@123",
+                Password = "Admin@123",  // Note: In production, you should hash passwords
                 PhoneNumber = "+1234567890",
                 IsAdmin = true
             });
@@ -83,9 +87,6 @@ using (var scope = app.Services.CreateScope())
         Console.WriteLine($"Database seeding failed: {ex.Message}");
     }
 }
-app.UseStaticFiles();
-app.UseRouting();
-app.MapDefaultControllerRoute();
 
 // Configure HTTP pipeline
 if (!app.Environment.IsDevelopment())

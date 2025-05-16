@@ -53,3 +53,16 @@ footer {
     background: #f8f9fa;
     padding: 1rem 0;
 }
+.navbar-nav .nav-link {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+#cartCount {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    font-size: 0.6rem;
+    padding: 3px 6px;
+}
