@@ -16,26 +16,36 @@
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-6 hero-content">
-                <h1 class="hero-title">Your Health, Our Priority</h1>
-                <p class="hero-subtitle">Trusted by thousands of families across the country</p>
-                <div class="hero-buttons">
-                    <a asp-controller="Account" asp-action="Login" class="btn btn-primary btn-lg me-3">
-                        <i class="bi bi-box-arrow-in-right"></i> Login
-                    </a>
-                    <a asp-controller="Account" asp-action="Register" class="btn btn-outline-light btn-lg">
-                        <i class="bi bi-person-plus"></i> Register
-                    </a>
-                </div>
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <h1 class="hero-title">Hello @User.Identity.Name, welcome to our pharmacy</h1>
+                    <p class="hero-subtitle">We're glad to have you back!</p>
+                }
+                else
+                {
+                    <h1 class="hero-title">Your Health, Our Priority</h1>
+                    <p class="hero-subtitle">Trusted by thousands of families across the country</p>
+                    <div class="hero-buttons">
+                        <a asp-controller="Account" asp-action="Login" class="btn btn-primary btn-lg me-3">
+                            <i class="bi bi-box-arrow-in-right"></i> Login
+                        </a>
+                        <a asp-controller="Account" asp-action="Register" class="btn btn-outline-light btn-lg">
+                            <i class="bi bi-person-plus"></i> Register
+                        </a>
+                    </div>
+                }
             </div>
             <div class="col-lg-6 hero-image">
-                <img src="/images/pharmacy-hero.png" alt="Pharmacy products" class="img-fluid rounded shadow">
+                <img src="~/Images/dawaya-logo.jpg"
+                    style="height:300px; width:450px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.08);"
+                    alt="Pharmacy products" class="img-fluid rounded shadow">
             </div>
         </div>
     </div>
 </div>
 
 <!-- Features Section -->
-<section class="features-section py-5 bg-light">
+<section class="features-section py-5">
     <div class="container">
         <h2 class="section-title text-center mb-5">Why Choose Dawaya?</h2>
         <div class="row g-4">
@@ -46,7 +56,8 @@
                             <i class="bi bi-shield-check feature-icon"></i>
                         </div>
                         <h3 class="h4">Authentic Medicines</h3>
-                        <p class="text-muted">100% genuine medications from licensed manufacturers with quality guarantees.</p>
+                        <p class="text-muted">100% genuine medications from licensed manufacturers with quality
+                            guarantees.</p>
                     </div>
                 </div>
             </div>
@@ -57,7 +68,8 @@
                             <i class="bi bi-truck feature-icon"></i>
                         </div>
                         <h3 class="h4">Fast Delivery</h3>
-                        <p class="text-muted">Same-day delivery available for urgent prescriptions in metropolitan areas.</p>
+                        <p class="text-muted">Same-day delivery available for urgent prescriptions in metropolitan
+                            areas.</p>
                     </div>
                 </div>
             </div>
@@ -84,20 +96,24 @@
             <div class="col-lg-8 mx-auto">
                 <div class="testimonial-carousel owl-carousel owl-theme">
                     <div class="testimonial-item text-center">
-                        <div class="testimonial-content bg-white p-4 rounded shadow-sm">
-                            <p class="mb-4">"Dawaya Pharmacy saved me when I needed emergency medication late at night. Their 24/7 service is a lifesaver!"</p>
+                        <div class="testimonial-content p-4 rounded shadow-sm">
+                            <p class="mb-4">"Dawaya Pharmacy saved me when I needed emergency medication late at night.
+                                Their 24/7 service is a lifesaver!"</p>
                             <div class="testimonial-author">
-                                <img src="/images/testimonial1.jpg" class="rounded-circle mb-2" width="60" alt="Sarah M.">
+                                <img src="/images/testimonial1.jpg" class="rounded-circle mb-2" width="60"
+                                    alt="Sarah M.">
                                 <h5 class="mb-1">Sarah M.</h5>
                                 <p class="text-muted small">Regular Customer</p>
                             </div>
                         </div>
                     </div>
                     <div class="testimonial-item text-center">
-                        <div class="testimonial-content bg-white p-4 rounded shadow-sm">
-                            <p class="mb-4">"The prices are unbeatable and the staff is incredibly knowledgeable. My whole family uses Dawaya."</p>
+                        <div class="testimonial-content p-4 rounded shadow-sm">
+                            <p class="mb-4">"The prices are unbeatable and the staff is incredibly knowledgeable. My
+                                whole family uses Dawaya."</p>
                             <div class="testimonial-author">
-                                <img src="/images/testimonial2.jpg" class="rounded-circle mb-2" width="60" alt="Ahmed K.">
+                                <img src="/images/testimonial2.jpg" class="rounded-circle mb-2" width="60"
+                                    alt="Ahmed K.">
                                 <h5 class="mb-1">Ahmed K.</h5>
                                 <p class="text-muted small">Customer for 5 years</p>
                             </div>
@@ -123,15 +139,79 @@
 @section Styles {
     <style>
         :root {
-            --dawaya-primary: #2a7fba;
-            --dawaya-secondary: #3bb77e;
+            --dawaya-primary: #226b4d;
+            /* Dark green from logo */
+            --dawaya-secondary: #b5d334;
+            /* Light green from logo */
             --dawaya-light: #f8f9fa;
         }
 
         .hero-section {
             padding: 5rem 0;
-            background: linear-gradient(135deg, rgba(42,127,186,0.9) 0%, rgba(59,183,126,0.9) 100%);
-            color: white;
+            background: linear-gradient(135deg, var(--dawaya-primary) 0%, var(--dawaya-secondary) 100%);
+            color: #fff;
+            position: relative;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(34, 107, 77, 0.45);
+            z-index: 0;
+            border-radius: 0 0 20px 20px;
+        }
+
+        body.dark-mode .hero-section {
+            background: linear-gradient(135deg, #183024 0%, #226b4d 100%);
+            color: #fff;
+        }
+
+        body.dark-mode .hero-section::before {
+            background: rgba(0, 0, 0, 0.55);
+        }
+
+        body.dark-mode .hero-title,
+        body.dark-mode .hero-subtitle {
+            color: #fff !important;
+            text-shadow: 0 2px 12px rgba(0, 0, 0, 0.7);
+        }
+
+        body.dark-mode .hero-buttons .btn-primary {
+            background-color: #b5d334;
+            border-color: #b5d334;
+            color: #183024;
+        }
+
+        body.dark-mode .hero-buttons .btn-primary:hover {
+            background-color: #eaffd0;
+            color: #226b4d;
+        }
+
+        body.dark-mode .hero-buttons .btn-outline-light {
+            color: #fff;
+            border-color: #fff;
+            background: transparent;
+        }
+
+        body.dark-mode .hero-buttons .btn-outline-light:hover {
+            background: #fff;
+            color: #226b4d;
+        }
+
+        body.dark-mode .hero-image img {
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+            border: 3px solid #fff;
+            background: #23272f;
+        }
+
+        .hero-section .container,
+        .hero-section .row,
+        .hero-section .hero-content,
+        .hero-section .hero-title,
+        .hero-section .hero-subtitle {
+            position: relative;
+            z-index: 1;
         }
 
         .hero-title {
@@ -139,64 +219,48 @@
             font-weight: 700;
             margin-bottom: 1rem;
             line-height: 1.2;
+            color: #fff;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
         }
 
         .hero-subtitle {
             font-size: 1.25rem;
             margin-bottom: 2rem;
-            opacity: 0.9;
+            opacity: 0.95;
+            color: #eaffd0;
+            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+        }
+
+        .hero-buttons .btn-primary {
+            background-color: var(--dawaya-secondary);
+            border-color: var(--dawaya-secondary);
+            color: #226b4d;
+            font-weight: 600;
+        }
+
+        .hero-buttons .btn-primary:hover {
+            background-color: #b5d334cc;
+            color: #174c36;
+        }
+
+        .hero-buttons .btn-outline-light {
+            color: #fff;
+            border-color: #fff;
+            background: transparent;
+        }
+
+        .hero-buttons .btn-outline-light:hover {
+            background: #fff;
+            color: #226b4d;
         }
 
         .hero-image img {
-            border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+            border: 2px solid var(--dawaya-primary);
+            background: #fff;
         }
 
-            .hero-image img:hover {
-                transform: scale(1.02);
-            }
-
-        .feature-icon-wrapper {
-            width: 60px;
-            height: 60px;
-            margin: 0 auto;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: rgba(42,127,186,0.1);
-            border-radius: 50%;
-        }
-
-        .feature-icon {
-            font-size: 1.5rem;
-            color: var(--dawaya-primary);
-        }
-
-        .feature-card {
-            transition: all 0.3s ease;
-            border-radius: 10px;
-        }
-
-            .feature-card:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-            }
-
-        .testimonials-section {
-            background-color: var(--dawaya-light);
-        }
-
-        .testimonial-carousel .owl-dots {
-            margin-top: 2rem;
-            text-align: center;
-        }
-
-        .cta-section {
-            background: var(--dawaya-primary);
-        }
-
-        @@media (max-width: 768px) {
+        media (max-width: 768px) {
             .hero-title {
                 font-size: 2.2rem;
             }
@@ -204,6 +268,85 @@
             .hero-image {
                 margin-top: 2rem;
             }
+        }
+
+        .features-section {
+            background-color: var(--dawaya-light);
+            transition: background-color 0.3s ease;
+        }
+
+        body.dark-mode .features-section {
+            background-color: #181c24;
+        }
+
+        .feature-card {
+            transition: all 0.3s ease;
+            border-radius: 10px;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        body.dark-mode .feature-card {
+            background: #23272f;
+            color: #e0e6ed;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.7);
+            border: 1px solid #2a2d34;
+        }
+
+        body.dark-mode .feature-card .h4 {
+            color: #b5d334;
+        }
+
+        body.dark-mode .feature-icon {
+            color: #b5d334;
+        }
+
+        body.dark-mode .feature-card .text-muted {
+            color: #000000 !important;
+        }
+
+        .section-title {
+            color: #226b4d;
+        }
+
+        body.dark-mode .section-title {
+            color: #b5d334;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .testimonials-section {
+            background-color: var(--dawaya-light);
+            transition: background-color 0.3s ease;
+        }
+
+        body.dark-mode .testimonials-section {
+            background-color: #181c24;
+        }
+
+        .testimonial-content {
+            background-color: #ffffff;
+            transition: all 0.3s ease;
+        }
+
+        body.dark-mode .testimonial-content {
+            background-color: #23272f;
+            color: #e0e6ed;
+            border: 1px solid #2a2d34;
+        }
+
+        body.dark-mode .testimonial-content p {
+            color: #e0e6ed;
+        }
+
+        body.dark-mode .testimonial-content .text-muted {
+            color: #b5d334 !important;
+        }
+
+        body.dark-mode .testimonial-content h5 {
+            color: #b5d334;
         }
     </style>
 }
@@ -217,7 +360,8 @@
 
     <!-- Owl Carousel CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css" />
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css" />
 
     <!-- Owl Carousel JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>

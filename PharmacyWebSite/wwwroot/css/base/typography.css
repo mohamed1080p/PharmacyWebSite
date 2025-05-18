@@ -1,0 +1,179 @@
+/* Base Typography */
+html {
+    font-size: 16px;
+    position: relative;
+    min-height: 100%;
+}
+
+body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    color: var(--text-color);
+    line-height: 1.6;
+    margin-bottom: 60px;
+    background-color: var(--light-bg);
+    opacity: 1;
+    transition: opacity var(--transition-slow);
+}
+
+/* Headings */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-weight: var(--font-weight-bold);
+    margin-bottom: var(--spacing-md);
+    color: var(--text-color);
+    line-height: 1.2;
+}
+
+h1 {
+    font-size: var(--font-size-3xl);
+}
+
+h2 {
+    font-size: var(--font-size-2xl);
+}
+
+h3 {
+    font-size: var(--font-size-xl);
+}
+
+h4 {
+    font-size: var(--font-size-lg);
+}
+
+h5 {
+    font-size: var(--font-size-base);
+}
+
+h6 {
+    font-size: var(--font-size-sm);
+}
+
+/* Paragraphs */
+p {
+    margin-bottom: var(--spacing-md);
+}
+
+/* Links */
+a {
+    color: var(--primary-color);
+    text-decoration: none;
+    transition: var(--transition-normal);
+}
+
+a:hover {
+    color: var(--secondary-color);
+}
+
+/* Lists */
+ul,
+ol {
+    margin-bottom: var(--spacing-md);
+    padding-left: var(--spacing-lg);
+}
+
+/* Blockquotes */
+blockquote {
+    border-left: 4px solid var(--primary-color);
+    padding-left: var(--spacing-md);
+    margin-left: 0;
+    font-style: italic;
+    color: var(--text-muted);
+}
+
+/* Code */
+code {
+    font-family: 'Consolas', 'Monaco', monospace;
+    background-color: var(--light-bg);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--border-radius-sm);
+    font-size: var(--font-size-sm);
+}
+
+/* Text Utilities */
+.text-primary {
+    color: var(--primary-color) !important;
+}
+
+.text-secondary {
+    color: var(--secondary-color) !important;
+}
+
+.text-muted {
+    color: var(--text-muted) !important;
+}
+
+.text-light {
+    color: var(--text-light) !important;
+}
+
+.text-center {
+    text-align: center !important;
+}
+
+.text-right {
+    text-align: right !important;
+}
+
+.text-left {
+    text-align: left !important;
+}
+
+.text-uppercase {
+    text-transform: uppercase !important;
+}
+
+.text-lowercase {
+    text-transform: lowercase !important;
+}
+
+.text-capitalize {
+    text-transform: capitalize !important;
+}
+
+.font-weight-normal {
+    font-weight: var(--font-weight-normal) !important;
+}
+
+.font-weight-medium {
+    font-weight: var(--font-weight-medium) !important;
+}
+
+.font-weight-semibold {
+    font-weight: var(--font-weight-semibold) !important;
+}
+
+.font-weight-bold {
+    font-weight: var(--font-weight-bold) !important;
+}
+
+.font-weight-extrabold {
+    font-weight: var(--font-weight-extrabold) !important;
+}
+
+/* Dark Mode Typography */
+body.dark-mode {
+    color: var(--text-light);
+}
+
+body.dark-mode h1,
+body.dark-mode h2,
+body.dark-mode h3,
+body.dark-mode h4,
+body.dark-mode h5,
+body.dark-mode h6 {
+    color: var(--text-light);
+}
+
+body.dark-mode blockquote {
+    border-left-color: var(--secondary-color);
+    color: var(--text-light);
+}
+
+body.dark-mode code {
+    background-color: var(--dark-card-bg);
+    color: var(--text-light);
+}

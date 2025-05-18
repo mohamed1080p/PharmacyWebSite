@@ -1,0 +1,148 @@
+/* Base Button Styles */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-sm) var(--spacing-lg);
+    border-radius: var(--border-radius-sm);
+    font-weight: var(--font-weight-medium);
+    transition: var(--transition-normal);
+    position: relative;
+    overflow: hidden;
+    border: 1px solid transparent;
+    cursor: pointer;
+    text-decoration: none;
+    gap: var(--spacing-sm);
+}
+
+/* Button Variants */
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: var(--white);
+}
+
+.btn-primary:hover {
+    background-color: #174c36;
+    border-color: #174c36;
+    transform: translateY(-1px);
+}
+
+.btn-secondary {
+    background-color: var(--secondary-color);
+    border-color: var(--secondary-color);
+    color: var(--primary-color);
+}
+
+.btn-secondary:hover {
+    background-color: #a3c02d;
+    border-color: #a3c02d;
+    transform: translateY(-1px);
+}
+
+.btn-outline-primary {
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+    background: transparent;
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--primary-color);
+    color: var(--white);
+    transform: translateY(-1px);
+}
+
+.btn-outline-light {
+    color: var(--white);
+    border-color: var(--white);
+    background: transparent;
+}
+
+.btn-outline-light:hover {
+    background-color: var(--white);
+    color: var(--primary-color);
+    transform: translateY(-1px);
+}
+
+/* Button Sizes */
+.btn-sm {
+    padding: var(--spacing-xs) var(--spacing-md);
+    font-size: var(--font-size-sm);
+}
+
+.btn-lg {
+    padding: var(--spacing-md) var(--spacing-xl);
+    font-size: var(--font-size-lg);
+}
+
+/* Button with Icon */
+.btn i {
+    font-size: 1.1em;
+}
+
+/* Ripple Effect */
+.ripple {
+    position: absolute;
+    border-radius: 50%;
+    transform: scale(0);
+    animation: ripple 0.6s linear;
+    background-color: rgba(255, 255, 255, 0.3);
+    pointer-events: none;
+    width: 100px;
+    height: 100px;
+    left: 50%;
+    top: 50%;
+    margin-left: -50px;
+    margin-top: -50px;
+    z-index: 2;
+}
+
+@keyframes ripple {
+    to {
+        transform: scale(2.5);
+        opacity: 0;
+    }
+}
+
+/* Dark Mode Buttons */
+body.dark-mode .btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: var(--white);
+}
+
+body.dark-mode .btn-primary:hover {
+    background-color: #174c36;
+    border-color: #174c36;
+}
+
+body.dark-mode .btn-secondary {
+    background-color: var(--secondary-color);
+    border-color: var(--secondary-color);
+    color: var(--dark-bg);
+}
+
+body.dark-mode .btn-secondary:hover {
+    background-color: #a3c02d;
+    border-color: #a3c02d;
+}
+
+body.dark-mode .btn-outline-primary {
+    color: var(--secondary-color);
+    border-color: var(--secondary-color);
+}
+
+body.dark-mode .btn-outline-primary:hover {
+    background-color: var(--secondary-color);
+    color: var(--dark-bg);
+}
+
+body.dark-mode .btn-outline-light {
+    color: var(--text-light);
+    border-color: var(--text-light);
+}
+
+body.dark-mode .btn-outline-light:hover {
+    background-color: var(--text-light);
+    color: var(--dark-bg);
+}

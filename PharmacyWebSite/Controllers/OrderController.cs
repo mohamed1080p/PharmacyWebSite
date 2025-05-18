@@ -189,5 +189,18 @@ namespace PharmacyWebSite.Controllers
             TempData["ErrorMessage"] = "Order cannot be cancelled";
             return RedirectToAction("Confirmation", new { id });
         }
+
+        [HttpGet]
+        public async Task<IActionResult> History()
+        {
+            var userId = int.Parse(User.FindFirstValue(System.Security.Claims.ClaimTypes.NameIdentifier));
+            var orders = await _context.Orders
+                .Where(o => o.UserId == userId)
+                .OrderByDescending(o => o.OrderDate)
+                .Include(o => o.OrderItems)
+                .ThenInclude(oi => oi.Medicine)
+                .ToListAsync();
+            return View(orders);
+        }
     }
 }

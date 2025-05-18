@@ -1,0 +1,60 @@
+:root {
+    /* Brand Colors */
+    --primary-color: #226b4d;
+    --secondary-color: #b5d334;
+    --accent-color: #3b8c4d;
+
+    /* Text Colors */
+    --text-color: #2c3e50;
+    --text-light: #e0e6ed;
+    --text-muted: #6c757d;
+
+    /* Background Colors */
+    --light-bg: #f8f9fa;
+    --white: #ffffff;
+    --dark-bg: #181c24;
+    --dark-card-bg: #23272f;
+
+    /* Border Colors */
+    --border-color: #dee2e6;
+    --border-dark: #2a2d34;
+
+    /* Shadows */
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+    --shadow-md: 0 4px 24px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.18);
+    --shadow-dark: 0 4px 24px rgba(0, 0, 0, 0.7);
+
+    /* Spacing */
+    --spacing-xs: 0.25rem;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+    --spacing-xl: 2rem;
+
+    /* Border Radius */
+    --border-radius-sm: 5px;
+    --border-radius-md: 10px;
+    --border-radius-lg: 20px;
+
+    /* Transitions */
+    --transition-fast: all 0.2s ease;
+    --transition-normal: all 0.3s ease;
+    --transition-slow: all 0.5s ease;
+
+    /* Font Sizes */
+    --font-size-xs: 0.75rem;
+    --font-size-sm: 0.875rem;
+    --font-size-base: 1rem;
+    --font-size-lg: 1.25rem;
+    --font-size-xl: 1.5rem;
+    --font-size-2xl: 2rem;
+    --font-size-3xl: 3rem;
+
+    /* Font Weights */
+    --font-weight-normal: 400;
+    --font-weight-medium: 500;
+    --font-weight-semibold: 600;
+    --font-weight-bold: 700;
+    --font-weight-extrabold: 800;
+}
