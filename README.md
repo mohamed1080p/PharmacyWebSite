@@ -1,6 +1,5 @@
 # Dawaya Online Pharmacy 🏥💊
 
-[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 ![ASP.NET Core](https://img.shields.io/badge/ASP.NET_Core-6.0-purple)
 ![EF Core](https://img.shields.io/badge/EF_Core-6.0-green)
 ![Bootstrap](https://img.shields.io/badge/Bootstrap-5.0-blueviolet)
