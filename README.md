@@ -8,6 +8,24 @@
 
 A full-featured **online pharmacy platform** built with ASP.NET Core MVC, featuring multi-role authentication, product management, and order processing.
 
+### Frontend
+| Technology | Usage |
+|------------|-------|
+| HTML5 | Core page structure |
+| CSS3 | Styling and animations |
+| JavaScript (ES6) | Client-side logic |
+| jQuery | DOM manipulation & AJAX |
+| Bootstrap 5 | Responsive layout & components |
+
+### Backend
+| Technology | Usage |
+|------------|-------|
+| ASP.NET Core MVC | Web framework |
+| Entity Framework Core | ORM for MSSQL |
+| LINQ | Data querying |
+| C# | Business logic |
+| MSSQL | Database engine |
+
 ## ✨ Features
 
 ### 👨‍💻 User Side
