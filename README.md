@@ -7,25 +7,6 @@
 
 
 A full-featured **online pharmacy platform** built with ASP.NET Core MVC, featuring multi-role authentication, product management, and order processing.
-
-### Frontend
-| Technology | Usage |
-|------------|-------|
-| HTML5 | Core page structure |
-| CSS3 | Styling and animations |
-| JavaScript (ES6) | Client-side logic |
-| jQuery | DOM manipulation & AJAX |
-| Bootstrap 5 | Responsive layout & components |
-
-### Backend
-| Technology | Usage |
-|------------|-------|
-| ASP.NET Core MVC | Web framework |
-| Entity Framework Core | ORM for MSSQL |
-| LINQ | Data querying |
-| C# | Business logic |
-| MSSQL | Database engine |
-
 ## ✨ Features
 
 ### 👨‍💻 User Side
@@ -42,12 +23,12 @@ A full-featured **online pharmacy platform** built with ASP.NET Core MVC, featur
 ## 🛠️ Tech Stack
 
 ### Backend (My Contribution)
-- **Framework**: ASP.NET Core 6 MVC
-- **Database**: MSSQL with EF Core 6
+- **Framework**: ASP.NET Core 8 MVC
+- **Database**: MSSQL with EF Core 
 - **Patterns**: 
-  - Builder (for complex queries)
-  - Singleton (for service classes)
-  - Factory (for payment processing)
+  - Builder 
+  - Singleton 
+  - Factory 
 - **Tools**: LINQ, Identity Framework
 
 ### Frontend (Team Contribution)
@@ -55,14 +36,3 @@ A full-featured **online pharmacy platform** built with ASP.NET Core MVC, featur
 - Bootstrap 5 + jQuery
 - Responsive design
 
-
-
-📂 Project Structure
-Dawaya/
-├── Controllers/       # MVC controllers
-├── Models/            # Domain models
-├── Views/             # Razor views
-├── Services/          # Business logic
-├── Data/              # EF Core DbContext
-├── wwwroot/           # Static files
-└── Migrations/        # Database migrations
