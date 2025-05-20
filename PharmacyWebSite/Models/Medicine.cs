@@ -19,9 +19,8 @@ namespace PharmacyWebSite.Models
         [Range(0, int.MaxValue)]
         public int Stock { get; set; }
 
-        public string? ImagePath { get; set; } // Optional for images
+        public string? ImagePath { get; set; } 
 
-        // Relationships
         public ICollection<MedicinePrescription> MedicinePrescriptions { get; set; }
         public ICollection<OrderItem> OrderItems { get; set; }
         public ICollection<CartItem> CartItems { get; set; }

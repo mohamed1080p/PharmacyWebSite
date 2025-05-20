@@ -109,7 +109,6 @@ namespace PharmacyWebSite.Controllers
                 var existingMedicine = await _context.Medicines.FindAsync(id);
                 if (existingMedicine == null) return NotFound();
 
-                // Update fields
                 existingMedicine.Name = medicine.Name;
                 existingMedicine.Description = medicine.Description;
                 existingMedicine.Price = medicine.Price;

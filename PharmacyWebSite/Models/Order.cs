@@ -10,7 +10,6 @@
         public User User { get; set; }
         public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
 
-        // Builder class
         public class Builder
         {
             private readonly Order _order = new();

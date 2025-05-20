@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-// Models/RegisterViewModel.cs
 public class RegisterViewModel
 {
     [Required]

@@ -75,7 +75,6 @@ public class AccountController : Controller
     {
         if (ModelState.IsValid)
         {
-            // Check if email already exists
             if (_context.Users.Any(u => u.Email == model.Email))
             {
                 ModelState.AddModelError("Email", "This email address is already registered. Please use a different email or try logging in.");

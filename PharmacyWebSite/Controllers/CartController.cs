@@ -17,7 +17,6 @@ namespace PharmacyWebSite.Controllers
             _context = context;
         }
 
-        // GET: Cart
         public async Task<IActionResult> Index()
         {
             var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
@@ -212,7 +211,6 @@ namespace PharmacyWebSite.Controllers
                 return RedirectToAction("Index");
             }
 
-            // Verify stock
             foreach (var item in cart.CartItems)
             {
                 if (item.Medicine.Stock < item.Quantity)

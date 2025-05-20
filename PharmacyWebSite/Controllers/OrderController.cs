@@ -40,7 +40,6 @@ namespace PharmacyWebSite.Controllers
                 return RedirectToAction("Index", "Cart");
             }
 
-            // Verify stock availability
             foreach (var item in cart.CartItems)
             {
                 if (item.Medicine.Stock < item.Quantity)
@@ -68,9 +67,8 @@ namespace PharmacyWebSite.Controllers
                 return NotFound();
             }
 
-            // Verify email was sent
             ViewBag.EmailVerified = await VerifyEmailWasSent(order.User.Email, order.OrderId);
-            ViewBag.UserEmail = order.User.Email; // For display purposes
+            ViewBag.UserEmail = order.User.Email; 
 
             return View(order);
         }
@@ -104,10 +102,6 @@ namespace PharmacyWebSite.Controllers
 
         private async Task<bool> VerifyEmailWasSent(string email, int orderId)
         {
-            // In a real implementation, you would:
-            // 1. Check your email service logs
-            // 2. Verify the email exists in your sent items
-            // For now, we'll just return true for demonstration
             return true;
         }
 
@@ -123,7 +117,6 @@ namespace PharmacyWebSite.Controllers
 
             if (order != null)
             {
-                // Restore stock
                 foreach (var item in order.OrderItems)
                 {
                     item.Medicine.Stock += item.Quantity;
@@ -165,14 +158,12 @@ namespace PharmacyWebSite.Controllers
             if (cart == null || !cart.CartItems.Any())
                 return RedirectToAction("Index", "Cart");
 
-            // Using Builder Pattern
             var order = new Order.Builder()
                 .ForUser(userId)
                 .WithStatus("Confirmed")
                 .WithItems(cart.CartItems)
                 .Build();
 
-            // Stock update and cart clearing remains the same
             foreach (var item in cart.CartItems)
             {
                 item.Medicine.Stock -= item.Quantity;
@@ -182,7 +173,6 @@ namespace PharmacyWebSite.Controllers
             _context.Orders.Add(order);
             await _context.SaveChangesAsync();
 
-            // Email sending remains unchanged
             var user = await _context.Users.FindAsync(userId);
             if (user != null)
             {

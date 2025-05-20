@@ -7,7 +7,6 @@
 
         public AppConfigService()
         {
-            // Initialize with default values
             PharmacyName = "My Pharmacy";
             SupportEmail = "support@pharmacy.com";
         }

@@ -12,14 +12,13 @@ namespace PharmacyWebSite.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Add this new configuration for User
             modelBuilder.Entity<User>(entity =>
             {
                 entity.Property(u => u.IsAdmin)
-                    .HasDefaultValue(false); // Default to non-admin
+                    .HasDefaultValue(false); 
 
                 entity.HasIndex(u => u.Email)
-                    .IsUnique(); // Ensure email uniqueness
+                    .IsUnique(); 
             });
             modelBuilder.Entity<Medicine>(entity =>
             {
@@ -34,7 +33,6 @@ namespace PharmacyWebSite.Data
                     .HasDefaultValue(0);
             });
 
-            // Keep your existing configurations below
             modelBuilder.Entity<OrderItem>()
                 .HasOne(oi => oi.Order)
                 .WithMany(o => o.OrderItems)
@@ -69,7 +67,6 @@ namespace PharmacyWebSite.Data
                 .HasForeignKey(mp => mp.PrescriptionId);
         }
 
-        // Keep existing DbSet properties
         public DbSet<User> Users { get; set; }
         public DbSet<Medicine> Medicines { get; set; }
         public DbSet<Order> Orders { get; set; }

@@ -2,13 +2,12 @@
 {
     public class MedicinePrescription
     {
-        public int Id { get; set; }  // Primary Key
-        public int MedicineId { get; set; }  // Foreign Key to Medicine
-        public int PrescriptionId { get; set; }  // Foreign Key to Prescription
+        public int Id { get; set; }  
+        public int MedicineId { get; set; }  
+        public int PrescriptionId { get; set; }  
 
-        // Navigation properties
-        public Medicine Medicine { get; set; }  // Navigation to Medicine
-        public Prescription Prescription { get; set; }  // Navigation to Prescription
+        public Medicine Medicine { get; set; }  
+        public Prescription Prescription { get; set; }  
     }
 
 
