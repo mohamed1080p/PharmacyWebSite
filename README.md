@@ -40,4 +40,22 @@ A full-featured **online pharmacy platform** built with ASP.NET Core MVC, featur
 
 1. Clone the repo:
    ```bash
-   git clone https://github.com/yourusername/dawaya-pharmacy.git
+   git clone https://github.com/mohamed1080p/PharmacyWebsite
+2. Database setup
+  Update connection string in appsettings.json
+  Run EF Core migrations:
+  dotnet ef database update
+
+Run the application:
+```bash
+dotnet run
+
+📂 Project Structure
+Dawaya/
+├── Controllers/       # MVC controllers
+├── Models/            # Domain models
+├── Views/             # Razor views
+├── Services/          # Business logic
+├── Data/              # EF Core DbContext
+├── wwwroot/           # Static files
+└── Migrations/        # Database migrations
