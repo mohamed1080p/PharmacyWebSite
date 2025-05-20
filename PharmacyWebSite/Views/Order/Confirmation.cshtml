@@ -9,7 +9,6 @@
             <h4 class="text-success mb-4">Thank you for your order!</h4>
             <p>Your order #@Model.OrderId has been confirmed.</p>
 
-            <!-- Email Status Alert -->
             @if (ViewBag.EmailVerified)
             {
                 <div class="alert alert-success">
@@ -26,11 +25,9 @@
                 </div>
             }
 
-            <!-- Rest of your order summary -->
             <div class="mt-4">
                 <h5>Order Summary</h5>
                 <table class="table table-bordered mt-3">
-                    <!-- ... existing table code ... -->
                 </table>
             </div>
 

@@ -53,56 +53,6 @@ namespace PharmacyWebSite.Controllers
             return View(cart);
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ConfirmOrder()
-        {
-            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-            var cart = await _context.Carts
-                .Include(c => c.CartItems)
-                .ThenInclude(ci => ci.Medicine)
-                .FirstOrDefaultAsync(c => c.UserId == userId);
-
-            if (cart == null || !cart.CartItems.Any())
-            {
-                return RedirectToAction("Index", "Cart");
-            }
-
-            // Create order
-            var order = new Order
-            {
-                UserId = userId,
-                OrderDate = DateTime.Now,
-                Status = "Confirmed",
-                OrderItems = cart.CartItems.Select(ci => new OrderItem
-                {
-                    MedicineId = ci.MedicineId,
-                    Quantity = ci.Quantity,
-                    Price = ci.Price
-                }).ToList()
-            };
-
-            // Update stock
-            foreach (var item in cart.CartItems)
-            {
-                item.Medicine.Stock -= item.Quantity;
-            }
-
-            // Clear cart
-            _context.CartItems.RemoveRange(cart.CartItems);
-            _context.Orders.Add(order);
-            await _context.SaveChangesAsync();
-
-            // Send confirmation email
-            var user = await _context.Users.FindAsync(userId);
-            if (user != null)
-            {
-                await _emailSender.SendOrderConfirmationEmail(user.Email, order);
-            }
-
-            return RedirectToAction("Confirmation", new { id = order.OrderId });
-        }
-
         [HttpGet]
         public async Task<IActionResult> Confirmation(int id)
         {
@@ -189,5 +139,58 @@ namespace PharmacyWebSite.Controllers
             TempData["ErrorMessage"] = "Order cannot be cancelled";
             return RedirectToAction("Confirmation", new { id });
         }
+
+        [HttpGet]
+        public async Task<IActionResult> History()
+        {
+            var userId = int.Parse(User.FindFirstValue(System.Security.Claims.ClaimTypes.NameIdentifier));
+            var orders = await _context.Orders
+                .Where(o => o.UserId == userId)
+                .OrderByDescending(o => o.OrderDate)
+                .Include(o => o.OrderItems)
+                .ThenInclude(oi => oi.Medicine)
+                .ToListAsync();
+            return View(orders);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ConfirmOrder()
+        {
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var cart = await _context.Carts
+                .Include(c => c.CartItems)
+                .ThenInclude(ci => ci.Medicine)
+                .FirstOrDefaultAsync(c => c.UserId == userId);
+
+            if (cart == null || !cart.CartItems.Any())
+                return RedirectToAction("Index", "Cart");
+
+            // Using Builder Pattern
+            var order = new Order.Builder()
+                .ForUser(userId)
+                .WithStatus("Confirmed")
+                .WithItems(cart.CartItems)
+                .Build();
+
+            // Stock update and cart clearing remains the same
+            foreach (var item in cart.CartItems)
+            {
+                item.Medicine.Stock -= item.Quantity;
+            }
+
+            _context.CartItems.RemoveRange(cart.CartItems);
+            _context.Orders.Add(order);
+            await _context.SaveChangesAsync();
+
+            // Email sending remains unchanged
+            var user = await _context.Users.FindAsync(userId);
+            if (user != null)
+            {
+                await _emailSender.SendOrderConfirmationEmail(user.Email, order);
+            }
+
+            return RedirectToAction("Confirmation", new { id = order.OrderId });
+        }
+
     }
 }

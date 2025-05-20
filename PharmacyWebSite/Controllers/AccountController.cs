@@ -75,6 +75,13 @@ public class AccountController : Controller
     {
         if (ModelState.IsValid)
         {
+            // Check if email already exists
+            if (_context.Users.Any(u => u.Email == model.Email))
+            {
+                ModelState.AddModelError("Email", "This email address is already registered. Please use a different email or try logging in.");
+                return View(model);
+            }
+
             var user = new User
             {
                 Name = model.Name,
@@ -87,6 +94,7 @@ public class AccountController : Controller
             _context.Users.Add(user);
             _context.SaveChanges();
 
+            TempData["SuccessMessage"] = "Registration successful! Please log in to continue.";
             return RedirectToAction("Login");
         }
         return View(model);
@@ -102,5 +110,18 @@ public class AccountController : Controller
     public IActionResult AccessDenied()
     {
         return View();
+    }
+
+    [Authorize]
+    [HttpGet]
+    public IActionResult Profile()
+    {
+        var userId = int.Parse(User.FindFirstValue(System.Security.Claims.ClaimTypes.NameIdentifier));
+        var user = _context.Users.FirstOrDefault(u => u.Id == userId);
+        if (user == null)
+        {
+            return NotFound();
+        }
+        return View(user);
     }
 }

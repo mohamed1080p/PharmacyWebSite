@@ -1,0 +1,47 @@
+@model IEnumerable<PharmacyWebSite.Models.Order>
+@{
+    ViewData["Title"] = "Order History";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="container py-5">
+    <h2 class="mb-4 text-primary">Order History</h2>
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">You have not placed any orders yet.</div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Order #</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Total</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var order in Model)
+                    {
+                        <tr>
+                            <td>@order.OrderId</td>
+                            <td>@order.OrderDate.ToString("yyyy-MM-dd HH:mm")</td>
+                            <td><span class="badge bg-info">@order.Status</span></td>
+                            <td>
+                                @order.OrderItems.Sum(oi => oi.Price * oi.Quantity).ToString("C")
+                            </td>
+                            <td>
+                                <a asp-action="Confirmation" asp-route-id="@order.OrderId"
+                                    class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-eye"></i> View
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

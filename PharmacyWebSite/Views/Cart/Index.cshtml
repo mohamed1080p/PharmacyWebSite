@@ -100,7 +100,6 @@
 @section Scripts {
     <script>
         $(document).ready(function() {
-            // Remove item from cart
             $('.remove-item-btn').click(function() {
                 const row = $(this).closest('tr');
                 const cartItemId = row.data('cartitem-id');
@@ -123,7 +122,6 @@
                 });
             });
 
-            // Update quantity
             $('.update-quantity-btn').click(function() {
                 const row = $(this).closest('tr');
                 const cartItemId = row.data('cartitem-id');
