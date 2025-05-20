@@ -55,19 +55,7 @@ A full-featured **online pharmacy platform** built with ASP.NET Core MVC, featur
 - Bootstrap 5 + jQuery
 - Responsive design
 
-## 🖥️ Installation
 
-1. Clone the repo:
-   ```bash
-   git clone https://github.com/mohamed1080p/PharmacyWebsite
-2. Database setup
-  Update connection string in appsettings.json
-  Run EF Core migrations:
-  dotnet ef database update
-
-Run the application:
-```bash
-dotnet run
 
 📂 Project Structure
 Dawaya/
