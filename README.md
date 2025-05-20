@@ -3,6 +3,8 @@
 ![ASP.NET Core](https://img.shields.io/badge/ASP.NET_Core-6.0-purple)
 ![EF Core](https://img.shields.io/badge/EF_Core-6.0-green)
 ![Bootstrap](https://img.shields.io/badge/Bootstrap-5.0-blueviolet)
+![MSSQL](https://img.shields.io/badge/MSSQL-2019-blue)
+
 
 A full-featured **online pharmacy platform** built with ASP.NET Core MVC, featuring multi-role authentication, product management, and order processing.
 
