@@ -29,7 +29,7 @@ A full-featured **online pharmacy platform** built with ASP.NET Core MVC, featur
   - Builder 
   - Singleton 
   - Factory 
-- **Tools**: LINQ, Identity Framework
+
 
 ### Frontend (Team Contribution)
 - HTML5, CSS3, JavaScript (ES6)
